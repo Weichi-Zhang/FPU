@@ -42,8 +42,8 @@ int main() {
 
 	while (sim_time < MAX_SIM_TIME) {
 		
-		dut->frs1 = frs1_data[sim_time / NUM_OF_TESTCASES];
-		dut->frs2 = frs2_data[sim_time / NUM_OF_TESTCASES];
+		dut->frs1 = frs1_data[sim_time / 5];
+		dut->frs2 = frs2_data[sim_time / 5];
 
 		dut->eval();  
 		m_trace->dump(sim_time);
