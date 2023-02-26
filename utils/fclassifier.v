@@ -2,7 +2,7 @@
 
 module fclassifier(
 	input [EXPWIDTH + SIGWIDTH - 1 : 0] frs,
-	output [XLEN - 1 : 0] class
+	output [XLEN - 1 : 0] class_res
 );
 
 /* Get sign, exponent and fraction */
@@ -12,9 +12,9 @@ wire [22 : 0] fraction;
 
 assign sign = frs[31];
 assign exponent = frs[30 : 23];
-assign fraction = frs[22 : 0]
+assign fraction = frs[22 : 0];
 
-/* Class variables */
+/* class_res variables */
 reg neg_infinity;
 reg neg_normal_number;
 reg neg_subnormal_number;
@@ -110,7 +110,7 @@ always @ (*) begin
 	end
 end
 
-assign class[9 : 0] = {
+assign class_res[9 : 0] = {
 	neg_infinity,
 	neg_normal_number,
 	neg_subnormal_number,

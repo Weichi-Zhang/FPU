@@ -132,6 +132,7 @@ mulAddRecFN#(
 	.op(2'b00),
 	.a(rec_frs1),
 	.b(rec_frs2),
+	.c(rec_frs3),
 	.roundingMode(roundingMode),
 	.out(rec_fmadd_res),
 	.exceptionFlags(fmadd_exception_flags)
@@ -146,6 +147,7 @@ mulAddRecFN#(
 	.op(2'b10),
 	.a(rec_frs1),
 	.b(rec_frs2),
+	.c(rec_frs3),
 	.roundingMode(roundingMode),
 	.out(rec_fnmadd_res),
 	.exceptionFlags(fnmadd_exception_flags)
@@ -160,6 +162,7 @@ mulAddRecFN#(
 	.op(2'b01),
 	.a(rec_frs1),
 	.b(rec_frs2),
+	.c(rec_frs3),
 	.roundingMode(roundingMode),
 	.out(rec_fmsub_res),
 	.exceptionFlags(fmsub_exception_flags)
@@ -174,6 +177,7 @@ mulAddRecFN#(
 	.op(2'b11),
 	.a(rec_frs1),
 	.b(rec_frs2),
+	.c(rec_frs3),
 	.roundingMode(roundingMode),
 	.out(rec_fnmsub_res),
 	.exceptionFlags(fnmsub_exception_flags)
@@ -283,7 +287,7 @@ wire [XLEN - 1 : 0] rec_fclass_res;
 /* fclass */
 fclassifier fclass(
 	.frs(frs1),
-	.class(rec_fclass_res)
+	.class_res(rec_fclass_res)
 );
 
 
@@ -575,7 +579,8 @@ always @ (*) begin
 			farithematic_res = 0;
 			fcompare_res = 0;
 			fclass_res = 0;
-			convert_res = 0;
+			w_convert_res = 0;
+			l_convert_res = 0;
 			exception_flags = 5'b0;
 		end
 	endcase
