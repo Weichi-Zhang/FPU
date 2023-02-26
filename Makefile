@@ -8,7 +8,7 @@ TOP_NAME = fonecycle
 TEST_OP = fadd.s
 
 # Test case
-TEST_CASE = normal
+TEST_CASE = overflow
 
 # Store .v source file
 SRCS_V := ${TOP_NAME}.v $(shell find . -name '*.v')
