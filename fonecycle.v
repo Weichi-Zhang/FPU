@@ -279,6 +279,13 @@ compareRecFN#(
 	.exceptionFlags(minmax_exception_flags)
 );
 
+wire [XLEN - 1 : 0] rec_fclass_res; 
+/* fclass */
+fclassifier fclass(
+	.frs(frs1),
+	.class(rec_fclass_res)
+);
+
 
 /* Used to store IEEE754 format res */
 wire [EXPWIDTH + SIGWIDTH - 1 : 0] add_res;
@@ -551,6 +558,15 @@ always @ (*) begin
 			farithematic_res = 0;
 			fcompare_res = lt | eq;
 			fclass_res = 0;
+			w_convert_res = 0;
+			l_convert_res = 0;
+			exception_flags = 5'b0;
+		end
+		/* fclass frs */
+		5'd21: begin
+			farithematic_res = 0;
+			fcompare_res = 0;
+			fclass_res = rec_fclass_res;
 			w_convert_res = 0;
 			l_convert_res = 0;
 			exception_flags = 5'b0;
