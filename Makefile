@@ -2,7 +2,7 @@
 VC = verilator
 
 # TOP Module
-TOP_NAME = fonecycle
+TOP_NAME = fdivsqrt
 
 # Store .v source file
 SRCS_V := ${TOP_NAME}.v $(shell find . -name '*.v')
