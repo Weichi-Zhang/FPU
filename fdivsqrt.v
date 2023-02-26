@@ -1,3 +1,5 @@
+`ifndef _FDIVSQRT_V_
+`define _FDIVSQRT_V_
 `include "./params.vh"
 
 module fdivsqrt(
@@ -66,3 +68,4 @@ recFNToFN#(
 	.out(farithematic_res)
 );
 endmodule
+`endif // _FDIVSQRT_V_
