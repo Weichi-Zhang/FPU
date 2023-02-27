@@ -14,6 +14,7 @@ module fonecycle(
 	output reg [EXPWIDTH + SIGWIDTH - 1 : 0] farithematic_res,
 	output reg [31 : 0] w_convert_res,
 	output reg [63 : 0] l_convert_res,
+	output reg [XLEN - 1 : 0] mv_integer_res,
 	output reg fcompare_res,
 	output reg [XLEN - 1 : 0] fclass_res,
 	output reg [4 : 0] exception_flags
@@ -451,6 +452,7 @@ always @ (*) begin
 			w_convert_res = 0;
 			l_convert_res = 0;
 			exception_flags = add_exception_flags;
+			mv_integer_res = 0;
 		end
 		/* fsub.s frd, frs1, frs2 */
 		5'd1: begin
@@ -460,6 +462,7 @@ always @ (*) begin
 			w_convert_res = 0;
 			l_convert_res = 0;
 			exception_flags = sub_exception_flags;
+			mv_integer_res = 0;
 			
 		end
 		/* fmul.s frd, frs1, frs2 */
@@ -470,6 +473,7 @@ always @ (*) begin
 			w_convert_res = 0;
 			l_convert_res = 0;
 			exception_flags = mul_exception_flags;
+			mv_integer_res = 0;
 		end
 		/* fmin.s frd, frs1, frs2 */
 		5'd3: begin
@@ -484,6 +488,7 @@ always @ (*) begin
 			w_convert_res = 0;
 			l_convert_res = 0;
 			exception_flags = minmax_exception_flags;
+			mv_integer_res = 0;
 		end
 		/* fmax.s frd, frs1, frs2 */
 		5'd4: begin
@@ -498,6 +503,7 @@ always @ (*) begin
 			w_convert_res = 0;
 			l_convert_res = 0;
 			exception_flags = minmax_exception_flags;
+			mv_integer_res = 0;
 		end
 		/* fmadd.s frd, frs1, frs2, frs3 */
 		5'd5: begin
@@ -507,6 +513,7 @@ always @ (*) begin
 			w_convert_res = 0;
 			l_convert_res = 0;
 			exception_flags = fmadd_exception_flags;
+			mv_integer_res = 0;
 		end
 		/* fnmadd.s frd, frs1, frs2, frs3 */
 		5'd6: begin
@@ -516,6 +523,7 @@ always @ (*) begin
 			w_convert_res = 0;
 			l_convert_res = 0;
 			exception_flags = fnmadd_exception_flags;
+			mv_integer_res = 0;
 		end
 		/* fmsub.s frd, frs1, frs2, frs3 */
 		5'd7: begin
@@ -525,6 +533,7 @@ always @ (*) begin
 			w_convert_res = 0;
 			l_convert_res = 0;
 			exception_flags = fmsub_exception_flags;
+			mv_integer_res = 0;
 		end
 		/* fnmsub.s frd, frs1, frs2, frs3 */
 		5'd8: begin
@@ -534,6 +543,7 @@ always @ (*) begin
 			w_convert_res = 0;
 			l_convert_res = 0;
 			exception_flags = fnmsub_exception_flags;
+			mv_integer_res = 0;
 		end
 		/* fcvt.w.s rd, frs1 */
 		5'd9: begin
@@ -543,6 +553,7 @@ always @ (*) begin
 			w_convert_res = fcvtws_res;
 			l_convert_res = 0;
 			exception_flags = {fcvtws_exception_flags[2] | fcvtws_exception_flags[1], 1'b0, 1'b0, 1'b0, fcvtws_exception_flags[0]};
+			mv_integer_res = 0;
 		end
 		/* fcvt.wu.s rd, frs1 */
 		5'd10: begin
@@ -552,6 +563,7 @@ always @ (*) begin
 			w_convert_res = fcvtwus_res;
 			l_convert_res = 0;
 			exception_flags = {fcvtwus_exception_flags[2] | fcvtwus_exception_flags[1], 1'b0, 1'b0, 1'b0, fcvtwus_exception_flags[0]};
+			mv_integer_res = 0;
 		end
 		/* fcvt.l.s rd, frs1 */
 		5'd11: begin
@@ -561,6 +573,7 @@ always @ (*) begin
 			w_convert_res = 0;
 			l_convert_res = fcvtls_res;
 			exception_flags = {fcvtls_exception_flags[2] | fcvtls_exception_flags[1], 1'b0, 1'b0, 1'b0, fcvtls_exception_flags[0]};
+			mv_integer_res = 0;
 		end
 		/* fcvt.lu.s rd, frs1 */
 		5'd12: begin
@@ -570,6 +583,7 @@ always @ (*) begin
 			w_convert_res = 0;
 			l_convert_res = fcvtlus_res;
 			exception_flags = {fcvtlus_exception_flags[2] | fcvtlus_exception_flags[1], 1'b0, 1'b0, 1'b0, fcvtlus_exception_flags[0]};
+			mv_integer_res = 0;
 		end
 		/* fcvt.s.w frd, rs1 */
 		5'd13: begin
@@ -579,6 +593,7 @@ always @ (*) begin
 			w_convert_res = 0;
 			l_convert_res = 0;
 			exception_flags = fcvtsw_exception_flags;
+			mv_integer_res = 0;
 		end
 		/* fcvt.s.wu frd, rs1 */
 		5'd14: begin
@@ -588,6 +603,7 @@ always @ (*) begin
 			w_convert_res = 0;
 			l_convert_res = 0;
 			exception_flags = fcvtswu_exception_flags;
+			mv_integer_res = 0;
 		end
 		/* fcvt.s.l frd, rs1 */
 		5'd15: begin
@@ -597,6 +613,7 @@ always @ (*) begin
 			w_convert_res = 0;
 			l_convert_res = 0;
 			exception_flags = fcvtsl_exception_flags;
+			mv_integer_res = 0;
 		end
 		/* fcvt.s.lu frd, rs1 */
 		5'd16: begin
@@ -606,6 +623,7 @@ always @ (*) begin
 			w_convert_res = 0;
 			l_convert_res = 0;
 			exception_flags = fcvtslu_exception_flags;
+			mv_integer_res = 0;
 		end
 		/* fsgnj.s frd, frs1, frs2 */
 		5'd17: begin
@@ -615,6 +633,7 @@ always @ (*) begin
 			w_convert_res = 0;
 			l_convert_res = 0;
 			exception_flags = 5'b0;
+			mv_integer_res = 0;
 		end
 		/* fsgnjn.s frd, frs1, frs2 */
 		5'd18: begin
@@ -624,6 +643,7 @@ always @ (*) begin
 			w_convert_res = 0;
 			l_convert_res = 0;
 			exception_flags = 5'b0;
+			mv_integer_res = 0;
 		end
 		/* fsgnjx.s frd, frs1, frs2 */
 		5'd19: begin
@@ -633,6 +653,7 @@ always @ (*) begin
 			w_convert_res = 0;
 			l_convert_res = 0;
 			exception_flags = 5'b0;
+			mv_integer_res = 0;
 		end
 		/* feq.s rd, frs1, frs2 */
 		5'd20: begin
@@ -642,6 +663,7 @@ always @ (*) begin
 			w_convert_res = 0;
 			l_convert_res = 0;
 			exception_flags = minmax_exception_flags;
+			mv_integer_res = 0;
 		end
 		/* flt.s rd, frs1, frs2 */
 		5'd21: begin
@@ -651,6 +673,7 @@ always @ (*) begin
 			w_convert_res = 0;
 			l_convert_res = 0;
 			exception_flags = ltgt_exception_flags;
+			mv_integer_res = 0;
 		end
 		/* fle.s rd, frs1, frs2 */
 		5'd22: begin
@@ -660,6 +683,7 @@ always @ (*) begin
 			w_convert_res = 0;
 			l_convert_res = 0;
 			exception_flags = ltgt_exception_flags;
+			mv_integer_res = 0;
 		end
 		/* fclass frs */
 		5'd23: begin
@@ -669,6 +693,27 @@ always @ (*) begin
 			w_convert_res = 0;
 			l_convert_res = 0;
 			exception_flags = 5'b0;
+			mv_integer_res = 0;
+		end
+		/* fmv.w.x frd, rs */
+		5'd24: begin
+			farithematic_res = short_rs;
+			fcompare_res = 0;
+			fclass_res = 0;
+			w_convert_res = 0;
+			l_convert_res = 0;
+			exception_flags = 5'b0;
+			mv_integer_res = 0;
+		end
+		/* fmv.x.w rd, frs */
+		5'd25: begin
+			farithematic_res = 0;
+			fcompare_res = 0;
+			fclass_res = 0;
+			w_convert_res = 0;
+			l_convert_res = 0;
+			exception_flags = 5'b0;
+			mv_integer_res = frs1;
 		end
 		default: begin
 			farithematic_res = 0;
@@ -677,6 +722,7 @@ always @ (*) begin
 			w_convert_res = 0;
 			l_convert_res = 0;
 			exception_flags = 5'b0;
+			mv_integer_res = 0;
 		end
 	endcase
 end

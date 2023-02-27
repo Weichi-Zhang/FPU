@@ -49,6 +49,8 @@
 | 21      | `flt.s rd, frs1, frs2`           |
 | 22      | `fle.s rd, frs1, frs2`           |
 | 23      | `fclass frs`                     |
+| 24 | `fmv.w.x frd, rs` |
+| 25 | `fmv.x.w rd, frs` |
 
 
 
