@@ -57,6 +57,8 @@ wire [EXPWIDTH + SIGWIDTH : 0] rec_fmadd_res;
 wire [EXPWIDTH + SIGWIDTH : 0] rec_fnmadd_res;
 wire [EXPWIDTH + SIGWIDTH : 0] rec_fmsub_res;
 wire [EXPWIDTH + SIGWIDTH : 0] rec_fnmsub_res;
+wire [EXPWIDTH + SIGWIDTH : 0] rec_fcvtsw_res;
+wire [EXPWIDTH + SIGWIDTH : 0] rec_fcvtswu_res;
 wire [EXPWIDTH + SIGWIDTH : 0] rec_fcvtsl_res;
 wire [EXPWIDTH + SIGWIDTH : 0] rec_fcvtslu_res;
 
@@ -78,6 +80,10 @@ wire [2 : 0] fcvtws_exception_flags;
 wire [2 : 0] fcvtwus_exception_flags;
 wire [2 : 0] fcvtls_exception_flags;
 wire [2 : 0] fcvtlus_exception_flags;
+wire [4 : 0] fcvtsw_exception_flags;
+wire [4 : 0] fcvtswu_exception_flags;
+wire [4 : 0] fcvtsw_exception_flags;
+wire [4 : 0] fcvtswu_exception_flags;
 wire [4 : 0] fcvtsl_exception_flags;
 wire [4 : 0] fcvtslu_exception_flags;
 
@@ -238,6 +244,34 @@ recFNToIN#(
 	.intExceptionFlags(fcvtlus_exception_flags)
 );
 
+/* Convert 32bit signed integer to single float */
+iNToRecFN#(
+	.intWidth(32),
+	.expWidth(EXPWIDTH),
+	.sigWidth(SIGWIDTH)
+) fcvtsw(
+	.control(fcontrol),
+	.signedIn(1'b1),
+	.in(rs),
+	.roundingMode(roundingMode),
+	.out(rec_fcvtsw_res),
+	.exceptionFlags(fcvtsw_exception_flags)
+);
+
+/* Convert 32bit unsigned integer to single float */
+iNToRecFN#(
+	.intWidth(32),
+	.expWidth(EXPWIDTH),
+	.sigWidth(SIGWIDTH)
+) fcvtswu(
+	.control(fcontrol),
+	.signedIn(1'b0),
+	.in(rs),
+	.roundingMode(roundingMode),
+	.out(rec_fcvtswu_res),
+	.exceptionFlags(fcvtswu_exception_flags)
+);
+
 /* Convert 64bit signed integer to single float */
 iNToRecFN#(
 	.intWidth(64),
@@ -299,6 +333,8 @@ wire [EXPWIDTH + SIGWIDTH - 1 : 0] fmadd_res;
 wire [EXPWIDTH + SIGWIDTH - 1 : 0] fnmadd_res;
 wire [EXPWIDTH + SIGWIDTH - 1 : 0] fmsub_res;
 wire [EXPWIDTH + SIGWIDTH - 1 : 0] fnmsub_res;
+wire [EXPWIDTH + SIGWIDTH - 1 : 0] fcvtsw_res;
+wire [EXPWIDTH + SIGWIDTH - 1 : 0] fcvtswu_res;
 wire [EXPWIDTH + SIGWIDTH - 1 : 0] fcvtsl_res;
 wire [EXPWIDTH + SIGWIDTH - 1 : 0] fcvtslu_res;
 
@@ -357,6 +393,20 @@ recFNToFN#(
 ) rec2fn_fnmsub(
 	.in(rec_fnmsub_res),
 	.out(fnmsub_res)
+);
+recFNToFN#(
+	.expWidth(EXPWIDTH),
+	.sigWidth(SIGWIDTH)
+) rec2fn_fcvtsw(
+	.in(rec_fcvtsw_res),
+	.out(fcvtsw_res)
+);
+recFNToFN#(
+	.expWidth(EXPWIDTH),
+	.sigWidth(SIGWIDTH)
+) rec2fn_fcvtswu(
+	.in(rec_fcvtswu_res),
+	.out(fcvtswu_res)
 );
 recFNToFN#(
 	.expWidth(EXPWIDTH),
@@ -494,8 +544,26 @@ always @ (*) begin
 			l_convert_res = fcvtlus_res;
 			exception_flags = {fcvtlus_exception_flags[2], 1'b0, fcvtlus_exception_flags[1], 1'b0, fcvtlus_exception_flags[0]};
 		end
-		/* fcvt.s.l frd, rs1 */
+		/* fcvt.s.w frd, rs1 */
 		5'd13: begin
+			farithematic_res = fcvtsw_res;
+			fcompare_res = 0;
+			fclass_res = 0;
+			w_convert_res = 0;
+			l_convert_res = 0;
+			exception_flags = fcvtsw_exception_flags;
+		end
+		/* fcvt.s.wu frd, rs1 */
+		5'd14: begin
+			farithematic_res = fcvtswu_res;
+			fcompare_res = 0;
+			fclass_res = 0;
+			w_convert_res = 0;
+			l_convert_res = 0;
+			exception_flags = fcvtswu_exception_flags;
+		end
+		/* fcvt.s.l frd, rs1 */
+		5'd15: begin
 			farithematic_res = fcvtsl_res;
 			fcompare_res = 0;
 			fclass_res = 0;
@@ -504,7 +572,7 @@ always @ (*) begin
 			exception_flags = fcvtsl_exception_flags;
 		end
 		/* fcvt.s.lu frd, rs1 */
-		5'd14: begin
+		5'd16: begin
 			farithematic_res = fcvtslu_res;
 			fcompare_res = 0;
 			fclass_res = 0;
@@ -513,7 +581,7 @@ always @ (*) begin
 			exception_flags = fcvtslu_exception_flags;
 		end
 		/* fsgnj.s frd, frs1, frs2 */
-		5'd15: begin
+		5'd17: begin
 			farithematic_res = { frs2[FLEN - 1], frs1[FLEN - 2 : 0] };
 			fcompare_res = 0;
 			fclass_res = 0;
@@ -522,7 +590,7 @@ always @ (*) begin
 			exception_flags = 5'b0;
 		end
 		/* fsgnjn.s frd, frs1, frs2 */
-		5'd16: begin
+		5'd18: begin
 			farithematic_res = { ~frs2[FLEN - 1], frs1[FLEN - 2 : 0] };
 			fcompare_res = 0;
 			fclass_res = 0;
@@ -531,7 +599,7 @@ always @ (*) begin
 			exception_flags = 5'b0;
 		end
 		/* fsgnjx.s frd, frs1, frs2 */
-		5'd17: begin
+		5'd19: begin
 			farithematic_res = { frs1[FLEN - 1] ^ frs2[FLEN - 1], frs1[FLEN - 2 : 0] };
 			fcompare_res = 0;
 			fclass_res = 0;
@@ -540,7 +608,7 @@ always @ (*) begin
 			exception_flags = 5'b0;
 		end
 		/* feq.s rd, frs1, frs2 */
-		5'd18: begin
+		5'd20: begin
 			farithematic_res = 0;
 			fcompare_res = eq;
 			fclass_res = 0;
@@ -549,7 +617,7 @@ always @ (*) begin
 			exception_flags = 5'b0;
 		end
 		/* flt.s rd, frs1, frs2 */
-		5'd19: begin
+		5'd21: begin
 			farithematic_res = 0;
 			fcompare_res = lt;
 			fclass_res = 0;
@@ -558,7 +626,7 @@ always @ (*) begin
 			exception_flags = 5'b0;
 		end
 		/* fle.s rd, frs1, frs2 */
-		5'd20: begin
+		5'd22: begin
 			farithematic_res = 0;
 			fcompare_res = lt | eq;
 			fclass_res = 0;
@@ -567,7 +635,7 @@ always @ (*) begin
 			exception_flags = 5'b0;
 		end
 		/* fclass frs */
-		5'd21: begin
+		5'd23: begin
 			farithematic_res = 0;
 			fcompare_res = 0;
 			fclass_res = rec_fclass_res;
