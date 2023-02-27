@@ -6,7 +6,8 @@ module fonecycle(
 	input [EXPWIDTH + SIGWIDTH - 1 : 0] frs1,
 	input [EXPWIDTH + SIGWIDTH - 1 : 0] frs2,
 	input [EXPWIDTH + SIGWIDTH - 1 : 0] frs3,
-	input [XLEN - 1 : 0] rs,
+	input [31 : 0] short_rs,
+	input [63 : 0] long_rs,
 	input [4 : 0] ftype,
 	input fcontrol,
 	input [2 : 0] roundingMode,
@@ -22,6 +23,7 @@ module fonecycle(
 wire [EXPWIDTH + SIGWIDTH : 0] rec_frs1;
 wire [EXPWIDTH + SIGWIDTH : 0] rec_frs2;
 wire [EXPWIDTH + SIGWIDTH : 0] rec_frs3;
+
 
 
 /* Convert IEEE754 to rec format */
@@ -86,6 +88,7 @@ wire [4 : 0] fcvtsw_exception_flags;
 wire [4 : 0] fcvtswu_exception_flags;
 wire [4 : 0] fcvtsl_exception_flags;
 wire [4 : 0] fcvtslu_exception_flags;
+wire [4 : 0] ltgt_exception_flags;
 
 
 /* floating point add */
@@ -150,7 +153,7 @@ mulAddRecFN#(
 	.sigWidth(SIGWIDTH)
 ) fnmadder(
 	.control(fcontrol),
-	.op(2'b10),
+	.op(2'b11),
 	.a(rec_frs1),
 	.b(rec_frs2),
 	.c(rec_frs3),
@@ -180,7 +183,7 @@ mulAddRecFN#(
 	.sigWidth(SIGWIDTH)
 ) fnmsuber(
 	.control(fcontrol),
-	.op(2'b11),
+	.op(2'b10),
 	.a(rec_frs1),
 	.b(rec_frs2),
 	.c(rec_frs3),
@@ -196,7 +199,7 @@ recFNToIN#(
 	.intWidth(32)
 ) fcvtws(
 	.control(fcontrol),
-	.in(frs1),
+	.in(rec_frs1),
 	.roundingMode(roundingMode),
 	.signedOut(1'b1),
 	.out(fcvtws_res),
@@ -210,7 +213,7 @@ recFNToIN#(
 	.intWidth(32)
 ) fcvtwus(
 	.control(fcontrol),
-	.in(frs1),
+	.in(rec_frs1),
 	.roundingMode(roundingMode),
 	.signedOut(1'b0),
 	.out(fcvtwus_res),
@@ -224,7 +227,7 @@ recFNToIN#(
 	.intWidth(64)
 ) fcvtls(
 	.control(fcontrol),
-	.in(frs1),
+	.in(rec_frs1),
 	.roundingMode(roundingMode),
 	.signedOut(1'b1),
 	.out(fcvtls_res),
@@ -237,7 +240,7 @@ recFNToIN#(
 	.intWidth(64)
 ) fcvtlus(
 	.control(fcontrol),
-	.in(frs1),
+	.in(rec_frs1),
 	.roundingMode(roundingMode),
 	.signedOut(1'b0),
 	.out(fcvtlus_res),
@@ -252,7 +255,7 @@ iNToRecFN#(
 ) fcvtsw(
 	.control(fcontrol),
 	.signedIn(1'b1),
-	.in(rs),
+	.in(short_rs),
 	.roundingMode(roundingMode),
 	.out(rec_fcvtsw_res),
 	.exceptionFlags(fcvtsw_exception_flags)
@@ -266,7 +269,7 @@ iNToRecFN#(
 ) fcvtswu(
 	.control(fcontrol),
 	.signedIn(1'b0),
-	.in(rs),
+	.in(short_rs),
 	.roundingMode(roundingMode),
 	.out(rec_fcvtswu_res),
 	.exceptionFlags(fcvtswu_exception_flags)
@@ -280,7 +283,7 @@ iNToRecFN#(
 ) fcvtsl(
 	.control(fcontrol),
 	.signedIn(1'b1),
-	.in(rs),
+	.in(long_rs),
 	.roundingMode(roundingMode),
 	.out(rec_fcvtsl_res),
 	.exceptionFlags(fcvtsl_exception_flags)
@@ -294,13 +297,14 @@ iNToRecFN#(
 ) fcvtslu(
 	.control(fcontrol),
 	.signedIn(1'b0),
-	.in(rs),
+	.in(long_rs),
 	.roundingMode(roundingMode),
 	.out(rec_fcvtslu_res),
 	.exceptionFlags(fcvtslu_exception_flags)
 );
 /* variables to accept the result of fmin/fmax */
-wire lt, eq, gt, unordered;
+wire eq, lt, gt, unordered;
+wire waste_eq, waste_lt, waste_gt, waste_unordered;
 
 /* floating point min */
 compareRecFN#(
@@ -309,14 +313,27 @@ compareRecFN#(
 ) fminmaxer(
 	.a(rec_frs1),
 	.b(rec_frs2),
-	.signaling(1'b1),
-	.lt(lt),
+	.signaling(1'b0),
+	.lt(waste_lt),
 	.eq(eq),
-	.gt(gt),
+	.gt(waste_gt),
 	.unordered(unordered),
 	.exceptionFlags(minmax_exception_flags)
 );
 
+compareRecFN#(
+	.expWidth(EXPWIDTH),
+	.sigWidth(SIGWIDTH)
+) fltgter (
+	.a(rec_frs1),
+	.b(rec_frs2),
+	.signaling(1'b1),
+	.lt(lt),
+	.eq(waste_eq),
+	.gt(gt),
+	.unordered(waste_unordered),
+	.exceptionFlags(ltgt_exception_flags)
+);
 wire [XLEN - 1 : 0] rec_fclass_res; 
 /* fclass */
 fclassifier fclass(
@@ -456,7 +473,12 @@ always @ (*) begin
 		end
 		/* fmin.s frd, frs1, frs2 */
 		5'd3: begin
-			farithematic_res = lt ? frs1 : frs2;
+			if ((frs1 == 32'h80000000 && frs2 == 32'h00000000) || (frs1 == 32'h00000000 && frs2 == 32'h80000000)) begin
+				farithematic_res = 32'h80000000;	
+			end
+			else begin
+				farithematic_res = lt ? frs1 : frs2;
+			end
 			fcompare_res = 0;
 			fclass_res = 0;
 			w_convert_res = 0;
@@ -465,7 +487,12 @@ always @ (*) begin
 		end
 		/* fmax.s frd, frs1, frs2 */
 		5'd4: begin
-			farithematic_res = gt ? frs1 : frs2;
+			if ((frs1 == 32'h80000000 && frs2 == 32'h00000000) || (frs1 == 32'h00000000 && frs2 == 32'h80000000)) begin
+				farithematic_res = 32'h00000000;	
+			end
+			else begin
+				farithematic_res = gt ? frs1 : frs2;
+			end
 			fcompare_res = 0;
 			fclass_res = 0;
 			w_convert_res = 0;
@@ -515,7 +542,7 @@ always @ (*) begin
 			fclass_res = 0;
 			w_convert_res = fcvtws_res;
 			l_convert_res = 0;
-			exception_flags = {fcvtws_exception_flags[2], 1'b0, fcvtws_exception_flags[1], 1'b0, fcvtws_exception_flags[0]};
+			exception_flags = {fcvtws_exception_flags[2] | fcvtws_exception_flags[1], 1'b0, 1'b0, 1'b0, fcvtws_exception_flags[0]};
 		end
 		/* fcvt.wu.s rd, frs1 */
 		5'd10: begin
@@ -524,7 +551,7 @@ always @ (*) begin
 			fclass_res = 0;
 			w_convert_res = fcvtwus_res;
 			l_convert_res = 0;
-			exception_flags = {fcvtwus_exception_flags[2], 1'b0, fcvtwus_exception_flags[1], 1'b0, fcvtwus_exception_flags[0]};
+			exception_flags = {fcvtwus_exception_flags[2] | fcvtwus_exception_flags[1], 1'b0, 1'b0, 1'b0, fcvtwus_exception_flags[0]};
 		end
 		/* fcvt.l.s rd, frs1 */
 		5'd11: begin
@@ -533,7 +560,7 @@ always @ (*) begin
 			fclass_res = 0;
 			w_convert_res = 0;
 			l_convert_res = fcvtls_res;
-			exception_flags = {fcvtls_exception_flags[2], 1'b0, fcvtls_exception_flags[1], 1'b0, fcvtls_exception_flags[0]};
+			exception_flags = {fcvtls_exception_flags[2] | fcvtls_exception_flags[1], 1'b0, 1'b0, 1'b0, fcvtls_exception_flags[0]};
 		end
 		/* fcvt.lu.s rd, frs1 */
 		5'd12: begin
@@ -542,7 +569,7 @@ always @ (*) begin
 			fclass_res = 0;
 			w_convert_res = 0;
 			l_convert_res = fcvtlus_res;
-			exception_flags = {fcvtlus_exception_flags[2], 1'b0, fcvtlus_exception_flags[1], 1'b0, fcvtlus_exception_flags[0]};
+			exception_flags = {fcvtlus_exception_flags[2] | fcvtlus_exception_flags[1], 1'b0, 1'b0, 1'b0, fcvtlus_exception_flags[0]};
 		end
 		/* fcvt.s.w frd, rs1 */
 		5'd13: begin
@@ -614,7 +641,7 @@ always @ (*) begin
 			fclass_res = 0;
 			w_convert_res = 0;
 			l_convert_res = 0;
-			exception_flags = 5'b0;
+			exception_flags = minmax_exception_flags;
 		end
 		/* flt.s rd, frs1, frs2 */
 		5'd21: begin
@@ -623,7 +650,7 @@ always @ (*) begin
 			fclass_res = 0;
 			w_convert_res = 0;
 			l_convert_res = 0;
-			exception_flags = 5'b0;
+			exception_flags = ltgt_exception_flags;
 		end
 		/* fle.s rd, frs1, frs2 */
 		5'd22: begin
@@ -632,7 +659,7 @@ always @ (*) begin
 			fclass_res = 0;
 			w_convert_res = 0;
 			l_convert_res = 0;
-			exception_flags = 5'b0;
+			exception_flags = ltgt_exception_flags;
 		end
 		/* fclass frs */
 		5'd23: begin

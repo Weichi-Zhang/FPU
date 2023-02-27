@@ -2,7 +2,7 @@
 #include <verilated_vcd_c.h>
 #include "Vfonecycle.h"
 
-#define NUM_OF_TESTCASES 3
+#define NUM_OF_TESTCASES 4
 #define MAX_SIM_TIME (NUM_OF_TESTCASES * 5)
 #define SUBMODULE_DEPTH 5
 int sim_time = 0;
@@ -10,13 +10,15 @@ int sim_time = 0;
 static unsigned int frs1_data[NUM_OF_TESTCASES] = {
 	0x40200000,
 	0xC49A6333,
-	0x40490FDB
+	0x40490FDB,
+	0x7F800000
 };
 
 static unsigned int frs2_data[NUM_OF_TESTCASES] = {
 	0x3F800000,
-	0x3F8CCCCD,
-	0x322BCC77
+	0xBF8CCCCD,
+	0x322BCC77,
+	0x7F800000
 };
 
 int main() {
@@ -30,8 +32,8 @@ int main() {
 	dut->frs1 = 0;
 	dut->frs2 = 0;
 	dut->frs3 = 0;
-	/* The operation is fadd.s */
-	dut->ftype = 0;
+	/* The operation is fsub.s */
+	dut->ftype = 1;
 	dut->fcontrol = 0;
 	/* roundingMode is 000 */
 	dut->roundingMode = 0;

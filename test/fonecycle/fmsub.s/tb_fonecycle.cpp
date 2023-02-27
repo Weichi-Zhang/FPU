@@ -8,15 +8,21 @@
 int sim_time = 0;
 
 static unsigned int frs1_data[NUM_OF_TESTCASES] = {
-	0x40200000,
-	0xC49A6333,
-	0x40490FDB
+	0x3F800000,
+	0xBF800000,
+	0x40000000
 };
 
 static unsigned int frs2_data[NUM_OF_TESTCASES] = {
+	0x40200000,
+	0xC49A6333,
+	0xC0A00000
+};
+
+static unsigned int frs3_data[NUM_OF_TESTCASES] = {
 	0x3F800000,
 	0x3F8CCCCD,
-	0x322BCC77
+	0xC0000000
 };
 
 int main() {
@@ -30,8 +36,8 @@ int main() {
 	dut->frs1 = 0;
 	dut->frs2 = 0;
 	dut->frs3 = 0;
-	/* The operation is fadd.s */
-	dut->ftype = 0;
+	/* The operation is fmsub.s */
+	dut->ftype = 7;
 	dut->fcontrol = 0;
 	/* roundingMode is 000 */
 	dut->roundingMode = 0;
@@ -41,6 +47,7 @@ int main() {
 		
 		dut->frs1 = frs1_data[sim_time / 5];
 		dut->frs2 = frs2_data[sim_time / 5];
+		dut->frs3 = frs3_data[sim_time / 5];
 
 		dut->eval();  
 		m_trace->dump(sim_time);

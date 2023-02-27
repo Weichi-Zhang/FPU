@@ -111,16 +111,15 @@ always @ (*) begin
 end
 
 assign class_res[9 : 0] = {
-	neg_infinity,
-	neg_normal_number,
-	neg_subnormal_number,
-	neg_zero,
-	pos_zero,
-	pos_subnormal_number,
-	pos_normal_number,
-	pos_infinity,
+	quiet_NaN,
 	signaling_NaN,
-	quiet_NaN
+	pos_infinity,
+	pos_normal_number,
+	pos_subnormal_number,
+	pos_zero,
+	neg_zero,
+	neg_subnormal_number,
+	neg_normal_number,
+	neg_infinity
 };
-
 endmodule

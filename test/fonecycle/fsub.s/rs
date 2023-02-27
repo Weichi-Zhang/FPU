@@ -1,0 +1,10 @@
+tb_fonecycle.cpp:28:	dut->trace(m_trace, SUBMODULE_DEPTH);               
+tb_fonecycle.cpp:32:	dut->frs1 = 0;
+tb_fonecycle.cpp:33:	dut->frs2 = 0;
+tb_fonecycle.cpp:34:	dut->frs3 = 0;
+tb_fonecycle.cpp:36:	dut->ftype = 1;
+tb_fonecycle.cpp:37:	dut->fcontrol = 0;
+tb_fonecycle.cpp:39:	dut->roundingMode = 0;
+tb_fonecycle.cpp:44:		dut->frs1 = frs1_data[sim_time / 5];
+tb_fonecycle.cpp:45:		dut->frs2 = frs2_data[sim_time / 5];
+tb_fonecycle.cpp:47:		dut->eval();  
