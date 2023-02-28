@@ -376,5 +376,38 @@
 
 
 
+## `flw frd, offset(rs)`
 
+| Attribute | Value                | Description |
+| --------- | -------------------- | ----------- |
+| `offset`  | `instruction[31:20]` |             |
+| `rs1`     | `instruction[19:15]` |             |
+| `width`   | `instruction[14:12]` | 值是010     |
+| `rd`      | `instruction[11:7]`  |             |
+| `opcode`  | `instruction[6:0]`   | 值是0000111 |
+
+
+
+## `fsw frs2, offset(rs1)`
+
+| Attribute | Value                | Description |
+| --------- | -------------------- | ----------- |
+| `offset[11:5]` | `instruction[31:25]` |             |
+|`frs2`|`instruction[24:20]`||
+| `rs1`     | `instruction[19:15]` |             |
+| `width`   | `instruction[14:12]` | 值是010     |
+| `offset[4:0]` | `instruction[11:7]`  |             |
+| `opcode`  | `instruction[6:0]`   | 值是0100111 |
+
+
+
+## `rv_decoder`接口
+
+
+
+## `rvc_decoder`接口
+
+
+
+## `decoder`接口
 
