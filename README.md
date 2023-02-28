@@ -312,15 +312,45 @@
 
 
 
+## `fdivsqrt`接口
+
+| I/O  | 位宽                  | 接口名             | 描述                                                         |
+| ---- | --------------------- | ------------------ | ------------------------------------------------------------ |
+| `I`  | 1                     | `clk`              | 时钟信号                                                     |
+| `I`  | 1                     | `rst`              | 复位信号                                                     |
+| `I`  | `EXPWIDTH + SIGWIDTH` | `frs1`             | 浮点数运算数1                                                |
+| `I`  | `EXPWIDTH + SIGWIDTH` | `frs2`             | 浮点数运算数2                                                |
+| `I`  | 1                     | `ftype`            | 运算类型，0为除法，1为平方根                                 |
+| `I`  | 1                     | `fcontrol`         | Detect tininess before or after rounding, 1 for after, 0 for before |
+| `I`  | 3                     | `roundingMode`     | 控制舍入模式                                                 |
+|`I`|1|`valid_in`|握手信号|
+| `O`  | `EXPWIDTH + SIGWIDTH` | `farithematic_res` | 浮点数除法/平方根的结果                                      |
+| `O`  | 4                     | `exception_flags`  | 出现的异常                                                   |
+| `O`  | 1                     | `ready_out`        | 握手信号，当模块准备好计算时，`ready_out`为1                 |
+| `O`  | 1                     | `finish`           | 当当前计算结束，并且计算结果全部有效时，`finish`为1          |
+
+
+
 ## `fdivsqrt`验证
 
 
 
 ### `fdiv.s`
 
+| `frs1`     | `frs2`     | `frd`      | Exception       | RoundingMode | Status                            |
+| ---------- | ---------- | ---------- | --------------- | ------------ | --------------------------------- |
+| 0x40490FDB | 0x402DF854 | 0x3F93EEE0 | {0, 0, 0, 0, 1} | 000          | <font color=green>**PASS**</font> |
+| 0xC49A4000 | 0x449A6333 | 0xBF7FC5A2 | {0, 0, 0, 0, 1} | 000          | <font color=green>**PASS**</font> |
+| 0x40490FDB | 0x3F800000 | 0x40490FDB | {0, 0, 0, 0, 0} | 000          | <font color=green>**PASS**</font> |
+
 
 
 ### `fsqrt.s`
+
+| `frs`      | `frd`      | Exception       | RoundingMode | Status                            |
+| ---------- | ---------- | --------------- | ------------ | --------------------------------- |
+| 0x40490FDB | 0x3FE2DFC5 | {0, 0, 0, 0, 1} | 000          | <font color=green>**PASS**</font> |
+| 0x461C4000 | 0x42C80000 | {0, 0, 0, 0, 0} | 000          | <font color=green>**PASS**</font> |
 
 
 

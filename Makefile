@@ -2,10 +2,10 @@
 VC = verilator
 
 # TOP Module
-TOP_NAME = fonecycle
+TOP_NAME = fdivsqrt
 
 # Test op
-TEST_OP = fadd.s
+TEST_OP = fsqrt.s
 
 
 # Store .v source file
