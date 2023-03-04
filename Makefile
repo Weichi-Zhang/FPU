@@ -2,10 +2,10 @@
 VC = verilator
 
 # TOP Module
-TOP_NAME = fdivsqrt
+TOP_NAME = rv_fdecoder
 
 # Test op
-TEST_OP = fsqrt.s
+TEST_OP = test1
 
 
 # Store .v source file

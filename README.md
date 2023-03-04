@@ -4,22 +4,22 @@
 
 ## `fonecycle`接口
 
-| I/O  | 位宽                   | 接口名            | 描述                                                         |
-| ---- | ---------------------- | ----------------- | ------------------------------------------------------------ |
-| `I`  | `EXPWIDTH + SIGWIDTH`  | `frs1`            | 浮点数运算第一个操作数                                       |
-| `I`  | `EXPWIDTH + SIGWIDTH`  | `frs2`            | 浮点数运算第二个操作数                                       |
-| `I`  | `EXPWIDTH. + SIGWIDTH` | `frs3`            | 浮点数运算第三个操作数                                       |
-| `I`  | 32                     | `rs`              | 浮点数运算需要用到的32位整数，例如整数转浮点数               |
-| `I`  | 64                     | `rs`              | 浮点数运算需要用到的64位整数                                 |
-| `I`  | 5                      | `ftype`           | 决定使用哪种浮点数运算，对应关系见下表                       |
-| `I`  | 1                      | `fcontrol`        | 1为detect tininess after rounding，0为before rounding.       |
-| `I`  | 3                      | `roundingMode`    | 代表舍入模式，具体哪种舍入模式见下表                         |
-| `O`  | `EXPWIDTH + SIGWIDTH`  | `farthematic_res` | 浮点数运算的结果                                             |
-| `O`  | 32                     | `w_convert_res`   | 浮点数转换后得到的32位整数                                   |
-| `O`  | 64                     | `l_convert_res`   | 浮点数转换后得到的64位整数                                   |
-| `O`  | 1                      | `fcompare_res`    | 浮点数比较的结果                                             |
-| `O`  | `XLEN`                 | `fclass_res`      | `fclass`指令的结果                                           |
-| `O`  | 5                      | `exception_flags` | 浮点数运算过程中出现的异常，异常的编码为`{invalid, infinite, overflow, underflow, inexact}` |
+| I/O  | 位宽                  | 接口名            | 描述                                                         |
+| ---- | --------------------- | ----------------- | ------------------------------------------------------------ |
+| `I`  | `EXPWIDTH + SIGWIDTH` | `frs1`            | 浮点数运算第一个操作数                                       |
+| `I`  | `EXPWIDTH + SIGWIDTH` | `frs2`            | 浮点数运算第二个操作数                                       |
+| `I`  | `EXPWIDTH + SIGWIDTH` | `frs3`            | 浮点数运算第三个操作数                                       |
+| `I`  | 32                    | `rs`              | 浮点数运算需要用到的32位整数，例如整数转浮点数               |
+| `I`  | 64                    | `rs`              | 浮点数运算需要用到的64位整数                                 |
+| `I`  | 5                     | `ftype`           | 决定使用哪种浮点数运算，对应关系见下表                       |
+| `I`  | 1                     | `fcontrol`        | 1为detect tininess after rounding，0为before rounding.       |
+| `I`  | 3                     | `roundingMode`    | 代表舍入模式，具体哪种舍入模式见下表                         |
+| `O`  | `EXPWIDTH + SIGWIDTH` | `farthematic_res` | 浮点数运算的结果                                             |
+| `O`  | 32                    | `w_convert_res`   | 浮点数转换后得到的32位整数                                   |
+| `O`  | 64                    | `l_convert_res`   | 浮点数转换后得到的64位整数                                   |
+| `O`  | 1                     | `fcompare_res`    | 浮点数比较的结果                                             |
+| `O`  | `XLEN`                | `fclass_res`      | `fclass`指令的结果                                           |
+| `O`  | 5                     | `exception_flags` | 浮点数运算过程中出现的异常，异常的编码为`{invalid, infinite, overflow, underflow, inexact}` |
 
 其中，`ftype`和浮点数运算的对应关系如下：
 
@@ -351,6 +351,97 @@
 | ---------- | ---------- | --------------- | ------------ | --------------------------------- |
 | 0x40490FDB | 0x3FE2DFC5 | {0, 0, 0, 0, 1} | 000          | <font color=green>**PASS**</font> |
 | 0x461C4000 | 0x42C80000 | {0, 0, 0, 0, 0} | 000          | <font color=green>**PASS**</font> |
+
+
+
+## `rv_fdecoder`接口
+
+| I/O  | 位宽           | 接口名                 | 描述                                    |
+| ---- | -------------- | ---------------------- | --------------------------------------- |
+| `I`  | 32             | `instruction`          | 输入的32位指令                          |
+| `O`  | 1              | `is_float_instruction` | 当前的32位指令是否是F extension中的指令 |
+| `O`  | 1              | `f_uses_rs1_o`         | 当前的指令是否用到了`rs1`               |
+| `O`  | 1              | `f_uses_rs2_o`         | 当前指令是否用到了`rs2`                 |
+| `O`  | 1              | `f_uses_rs3_o`         | 当前指令是否用到了`rs3`                 |
+| `O`  | 1              | `f_uses_rd_o`          | 当前指令是否用到了`rd`                  |
+| `O`  | `VIR_REG_ADDR` | `f_rs1_address_o`      | `rs1`的地址                             |
+| `O`  | `VIR_REG_ADDR` | `f_rs2_address_o`      | `rs2`的地址                             |
+| `O`  | `VIR_REG_ADDR` | `f_rs3_address_o`      | `rs3`的地址                             |
+| `O`  | `VIR_REG_ADDR` | `f_rd_address_o`       | `rd`的地址                              |
+| `O`  | 12             | `f_immediate_o`        | 如果是`flw.s, fsw.s`，需要用到的立即数  |
+| `O`  | 5              | `f_fu_function_o`      | 当前指令是哪个指令，对应关系见下表      |
+
+其中，`f_fu_function_o`和指令的对应关系如下：
+
+| 指令        | `f_fu_function_o` |
+| ----------- | ----------------- |
+| `fadd.s`    | 0                 |
+| `fsub.s`    | 1                 |
+| `fmul.s`    | 2                 |
+| `fmin.s`    | 3                 |
+| `fmax.s`    | 4                 |
+| `fmadd.s`   | 5                 |
+| `fnmadd.s`  | 6                 |
+| `fmsub.s`   | 7                 |
+| `fnmsub.s`  | 8                 |
+| `fcvt.w.s`  | 9                 |
+| `fcvt.wu.s` | 10                |
+| `fcvt.l.s`  | 11                |
+| `fcvt.lu.s` | 12                |
+| `fcvt.s.w`  | 13                |
+| `fcvt.s.wu` | 14                |
+| `fcvt.s.l`  | 15                |
+| `fcvt.s.lu` | 16                |
+| `fsgnj.s`   | 17                |
+| `fsgnjn.s`  | 18                |
+| `fsgnjx.s`  | 19                |
+| `feq.s`     | 20                |
+| `flt.s`     | 21                |
+| `fle.s`     | 22                |
+| `fclass`    | 23                |
+| `fmv.w.x`   | 24                |
+| `fmv.x.w`   | 25                |
+| `fdiv.s`    | 26                |
+| `fsqrt.s`   | 27                |
+| `flw`       | 28                |
+| `fsw`       | 29                |
+
+## `rv_fdecoder`验证
+
+| 验证的指令                  | 指令的编码 | Status                            |
+| --------------------------- | ---------- | --------------------------------- |
+| `add s0, s1, s2`            | 0x01248433 | <font color=green>**PASS**</font> |
+| `sub s0, s1, s2`            | 0x41248433 | <font color=green>**PASS**</font> |
+| `fadd.s f3, f2, f1`         | 0x001171d3 | <font color=green>**PASS**</font> |
+| `fsub.s f4, f3, f2`         | 0x0821f253 | <font color=green>**PASS**</font> |
+| `fmul.s f5, f4, f3`         | 0x103272d3 | <font color=green>**PASS**</font> |
+| `fmin.s f6, f5, f4`         | 0x28428353 | <font color=green>**PASS**</font> |
+| `fmax.s f7, f6, f5`         | 0x285313d3 | <font color=green>**PASS**</font> |
+| `fmadd.s f8, f7, f6, f5`    | 0x2863f443 | <font color=green>**PASS**</font> |
+| `fnmadd.s f9, f8, f7, f6`   | 0x307474cf | <font color=green>**PASS**</font> |
+| `fmsub.s f10, f9, f8, f7`   | 0x3884f547 | <font color=green>**PASS**</font> |
+| `fnmsub.s f11, f10, f9, f8` | 0x409575cb | <font color=green>**PASS**</font> |
+| `fcvt.w.s s0, f12 `         | 0xc0067453 | <font color=green>**PASS**</font> |
+| `fcvt.wu.s s1, f13`         | 0xc016f4d3 | <font color=green>**PASS**</font> |
+| `fcvt.l.s s2, f14`          | 0xc0277953 | <font color=green>**PASS**</font> |
+| `fcvt.lu.s s3, f15`         | 0xc037f9d3 | <font color=green>**PASS**</font> |
+| `fcvt.s.w f16, s4`          | 0xd00a7853 | <font color=green>**PASS**</font> |
+| `fcvt.s.wu f17, s5`         | 0xd01af8d3 | <font color=green>**PASS**</font> |
+| `fcvt.s.l f18, t0`          | 0xd022f953 | <font color=green>**PASS**</font> |
+| `fcvt.s.lu f19, t1`         | 0xd03379d3 | <font color=green>**PASS**</font> |
+| `feq.s t2, f20`             | 0xa00a23d3 | <font color=green>**PASS**</font> |
+| `flt.s t3, f21`             | 0xa00a9e53 | <font color=green>**PASS**</font> |
+| `fle.s t4, f22`             | 0xa00b0ed3 | <font color=green>**PASS**</font> |
+| `fclass.s t5, f23`          | 0xe00b9f53 | <font color=green>**PASS**</font> |
+| `fdiv.s f6, f24, f0`        | 0x180c7353 | <font color=green>**PASS**</font> |
+| `fsqrt.s f7, f25`           | 0x580cf3d3 | <font color=green>**PASS**</font> |
+| `fmv.w.x f26, a0`           | 0xf0050d53 | <font color=green>**PASS**</font> |
+| `fmv.x.w a1, f27`           | 0xe00d85d3 | <font color=green>**PASS**</font> |
+| `flw f28, 114514(a1)`       | 0xf525ae07 | <font color=green>**PASS**</font> |
+| `fsw f29, 1919810(a2)`      | 0xb5d62127 | <font color=green>**PASS**</font> |
+| `fsgnj.s f3, f2, f1`        | 0x201101d3 | <font color=green>**PASS**</font> |
+| `fsgnjn.s f30, f29, f28`    | 0x21ce9f53 | <font color=green>**PASS**</font> |
+| `fsgnjx.s f31, f30, f29`    | 0x21df2fd3 | <font color=green>**PASS**</font> |
 
 
 

@@ -1,8 +1,12 @@
-# fdecode
+# Fdecoder
 
 假设传入的指令是`instruction`，位宽是32
 
-## `fadd.s frd, frs1, frs2`
+## 需要实现的指令
+
+
+
+### `fadd.s frd, frs1, frs2`
 
 该指令是S型指令
 
@@ -20,7 +24,7 @@
 
 
 
-## `fsub.s frd, frs1, frs2`
+### `fsub.s frd, frs1, frs2`
 | Attribute | Value                | Description                                                 |
 | --------- | -------------------- | ----------------------------------------------------------- |
 | `funct5`  | `instruction[31:27]` | 值是00001                                                   |
@@ -33,7 +37,7 @@
 
 
 
-## `fmul.s frd, frs1, frs2`
+### `fmul.s frd, frs1, frs2`
 
 | Attribute | Value                | Description                                                 |
 | --------- | -------------------- | ----------------------------------------------------------- |
@@ -47,7 +51,7 @@
 
 
 
-## `fmin.s frd, frs1, frs2`
+### `fmin.s frd, frs1, frs2`
 
 | Attribute | Value                | Description                                                 |
 | --------- | -------------------- | ----------------------------------------------------------- |
@@ -61,7 +65,7 @@
 
 
 
-## `fmax.s frd, frs1, frs2`
+### `fmax.s frd, frs1, frs2`
 
 | Attribute | Value                | Description                                                 |
 | --------- | -------------------- | ----------------------------------------------------------- |
@@ -75,7 +79,7 @@
 
 
 
-## `fmadd.s frd, frs1, frs2, frs3`
+### `fmadd.s frd, frs1, frs2, frs3`
 
 | Attribute | Value                | Description    |
 | --------- | -------------------- | -------------- |
@@ -89,7 +93,7 @@
 
 
 
-## `fnmadd.s frd, frs1, frs2, frs3`
+### `fnmadd.s frd, frs1, frs2, frs3`
 | Attribute | Value                | Description    |
 | --------- | -------------------- | -------------- |
 | `frs3`    | `instruction[31:27]` | 第三个操作数   |
@@ -101,7 +105,7 @@
 | `opcode`  | `instruction[6:0]`   | 值是1001111    |
 
 
-## `fmsub.s frd, frs1, frs2, frs3`
+### `fmsub.s frd, frs1, frs2, frs3`
 
 | Attribute | Value                | Description    |
 | --------- | -------------------- | -------------- |
@@ -113,7 +117,7 @@
 | `frd`     | `instruction[11:7]`  | 要写回的寄存器 |
 | `opcode`  | `instruction[6:0]`   | 值是1000111    |
 
-## `fnmsub.s frd, frs1, frs2, frs3`
+### `fnmsub.s frd, frs1, frs2, frs3`
 
 | Attribute | Value                | Description    |
 | --------- | -------------------- | -------------- |
@@ -127,7 +131,7 @@
 
 
 
-## `fcvt.w.s rd, frs1`
+### `fcvt.w.s rd, frs1`
 
 | Attribute | Value                | Description |
 | --------- | -------------------- | ----------- |
@@ -141,7 +145,7 @@
 
 
 
-## `fcvt.wu.s rd, frs1`
+### `fcvt.wu.s rd, frs1`
 | Attribute | Value                | Description |
 | --------- | -------------------- | ----------- |
 | `funct5`  | `instruction[31:27]` | 值是11000   |
@@ -154,7 +158,7 @@
 
 
 
-## `fcvt.l.s rd, frs1`
+### `fcvt.l.s rd, frs1`
 
 | Attribute | Value                | Description |
 | --------- | -------------------- | ----------- |
@@ -168,7 +172,7 @@
 
 
 
-## `fcvt.lu.s rd, frs1`
+### `fcvt.lu.s rd, frs1`
 
 | Attribute | Value                | Description |
 | --------- | -------------------- | ----------- |
@@ -182,7 +186,7 @@
 
 
 
-## `fcvt.s.w frd, rs1`
+### `fcvt.s.w frd, rs1`
 
 
 
@@ -198,7 +202,7 @@
 
 
 
-## `fcvt.s.wu frd, rs1`
+### `fcvt.s.wu frd, rs1`
 | Attribute | Value                | Description |
 | --------- | -------------------- | ----------- |
 | `funct5`  | `instruction[31:27]` | 值是11010   |
@@ -210,7 +214,7 @@
 | `opcode`  | `instruction[6:0]`   | 值是1010011 |
 
 
-## `fcvt.s.l frd, rs1`
+### `fcvt.s.l frd, rs1`
 
 | Attribute | Value                | Description |
 | --------- | -------------------- | ----------- |
@@ -222,7 +226,7 @@
 | `frd`     | `instruction[11:7]`  |             |
 | `opcode`  | `instruction[6:0]`   | 值是1010011 |
 
-## `fcvt.s.lu frd, rs1`
+### `fcvt.s.lu frd, rs1`
 
 | Attribute | Value                | Description |
 | --------- | -------------------- | ----------- |
@@ -236,7 +240,7 @@
 
 
 
-## `fsgnj.s frd, frs1, frs2`
+### `fsgnj.s frd, frs1, frs2`
 
 | Attribute | Value                | Description |
 | --------- | -------------------- | ----------- |
@@ -250,7 +254,7 @@
 
 
 
-## `fsgnjn.s frd, frs1, frs2`
+### `fsgnjn.s frd, frs1, frs2`
 | Attribute | Value                | Description |
 | --------- | -------------------- | ----------- |
 | `funct5`  | `instruction[31:27]` | 值是00100   |
@@ -262,7 +266,7 @@
 | `opcode`  | `instruction[6:0]`   | 值是1010011 |
 
 
-## `fsgnjx.s frd, frs1, frs2`
+### `fsgnjx.s frd, frs1, frs2`
 | Attribute | Value                | Description |
 | --------- | -------------------- | ----------- |
 | `funct5`  | `instruction[31:27]` | 值是00100   |
@@ -274,7 +278,7 @@
 | `opcode`  | `instruction[6:0]`   | 值是1010011 |
 
 
-## `feq.s rd, frs1, frs2`
+### `feq.s rd, frs1, frs2`
 
 | Attribute | Value                | Description |
 | --------- | -------------------- | ----------- |
@@ -288,7 +292,7 @@
 
 
 
-## `flt.s rd, frs1, frs2`
+### `flt.s rd, frs1, frs2`
 
 | Attribute | Value                | Description |
 | --------- | -------------------- | ----------- |
@@ -300,7 +304,7 @@
 | `rd`      | `instruction[11:7]`  |             |
 | `opcode`  | `instruction[6:0]`   | 值是1010011 |
 
-## `fle.s rd, frs1, frs2`
+### `fle.s rd, frs1, frs2`
 
 | Attribute | Value                | Description |
 | --------- | -------------------- | ----------- |
@@ -312,7 +316,7 @@
 | `rd`      | `instruction[11:7]`  |             |
 | `opcode`  | `instruction[6:0]`   | 值是1010011 |
 
-## `fclass rd, frs1`
+### `fclass rd, frs1`
 
 | Attribute | Value                | Description |
 | --------- | -------------------- | ----------- |
@@ -326,7 +330,7 @@
 
 
 
-## `fmv.w.x frd, rs1`
+### `fmv.w.x frd, rs1`
 | Attribute | Value                | Description |
 | --------- | -------------------- | ----------- |
 | `funct5`  | `instruction[31:27]` | 值是11110   |
@@ -338,7 +342,7 @@
 | `opcode`  | `instruction[6:0]`   | 值是1010011 |
 
 
-## `fmv.x.w rd, frs1`
+### `fmv.x.w rd, frs1`
 
 | Attribute | Value                | Description |
 | --------- | -------------------- | ----------- |
@@ -350,7 +354,7 @@
 | `frd`     | `instruction[11:7]`  |             |
 | `opcode`  | `instruction[6:0]`   | 值是1010011 |
 
-## `fdiv.s frd, frs1, frs2`
+### `fdiv.s frd, frs1, frs2`
 
 | Attribute | Value                | Description                                                 |
 | --------- | -------------------- | ----------------------------------------------------------- |
@@ -362,7 +366,7 @@
 | `frd`     | `instruction[11:7]`  | 要写回的寄存器                                              |
 | `opcode`  | `instruction[6:0]`   | 值是1010011                                                 |
 
-## `fsqrt.s frd, frs1`
+### `fsqrt.s frd, frs1`
 
 | Attribute | Value                | Description    |
 | --------- | -------------------- | -------------- |
@@ -376,7 +380,7 @@
 
 
 
-## `flw frd, offset(rs)`
+### `flw frd, offset(rs)`
 
 | Attribute | Value                | Description |
 | --------- | -------------------- | ----------- |
@@ -388,7 +392,7 @@
 
 
 
-## `fsw frs2, offset(rs1)`
+### `fsw frs2, offset(rs1)`
 
 | Attribute | Value                | Description |
 | --------- | -------------------- | ----------- |
@@ -401,13 +405,44 @@
 
 
 
-## `rv_decoder`接口
+### F extension的`opcode`
+
+| 指令        | `opcode` |
+| ----------- | -------- |
+| `fadd.s`    | 1010011  |
+| `fsub.s`    | 1010011  |
+| `fmul.s`    | 1010011  |
+| `fmin.s`    | 1010011  |
+| `fmax.s`    | 1010011  |
+| `fmadd.s`   | 1000011  |
+| `fnmadd.s`  | 1001111  |
+| `fmsub.s`   | 1000111  |
+| `fnmsub.s`  | 1001011  |
+| `fcvt.w.s`  | 1010011  |
+| `fcvt.wu.s` | 1010011  |
+| `fcvt.l.s`  | 1010011  |
+| `fcvt.lu.s` | 1010011  |
+| `fcvt.s.w`  | 1010011  |
+| `fcvt.s.wu` | 1010011  |
+| `fcvt.s.l`  | 1010011  |
+| `fcvt.s.lu` | 1010011  |
+| `fsgnj.s`   | 1010011  |
+| `fsgnjn.s`  | 1010011  |
+| `fsgnjx.s`  | 1010011  |
+| `feq.s`     | 1010011  |
+| `flt.s`     | 1010011  |
+| `fle.s`     | 1010011  |
+| `fclass`    | 1010011  |
+| `fmv.w.x`   | 1010011  |
+| `fmv.x.w`   | 1010011  |
+| `fdiv.s`    | 1010011  |
+| `fsqrt.s`   | 1010011  |
+| `flw`       | 0000111  |
+| `fsw`       | 0100111  |
 
 
 
-## `rvc_decoder`接口
+## `rv_fdecoder`接口
 
 
-
-## `decoder`接口
 
