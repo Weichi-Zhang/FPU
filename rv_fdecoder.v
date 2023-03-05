@@ -11,10 +11,10 @@ module rv_fdecoder(
 	output reg f_uses_rs2_o,
 	output reg f_uses_rs3_o,
 	output reg f_uses_rd_o,
-	output reg [VIR_REG_ADDR - 1 : 0] f_rs1_address_o,
-	output reg [VIR_REG_ADDR - 1 : 0] f_rs2_address_o,
-	output reg [VIR_REG_ADDR - 1 : 0] f_rs3_address_o,
-	output reg [VIR_REG_ADDR - 1 : 0] f_rd_address_o,
+	output reg [VIR_REG_ADDR_WIDTH - 1 : 0] f_rs1_address_o,
+	output reg [VIR_REG_ADDR_WIDTH - 1 : 0] f_rs2_address_o,
+	output reg [VIR_REG_ADDR_WIDTH - 1 : 0] f_rs3_address_o,
+	output reg [VIR_REG_ADDR_WIDTH - 1 : 0] f_rd_address_o,
 	output reg [11 : 0] f_immediate_o,
 	output reg [4 : 0] f_fu_function_o
 );
