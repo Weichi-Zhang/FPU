@@ -442,7 +442,118 @@
 
 
 
-## `rv_fdecoder`接口
 
 
+## 需要支持的压缩指令
+
+
+
+### `c.flw`：01100
+
+指令的格式是：`c.flw frd' offset(rs')`
+
+指令的编码如下：
+
+| Attribute     | Value                | Description |
+| ------------- | -------------------- | ----------- |
+| `funct3`      | `instruction[15:13]` | 值是011     |
+| `offset[5:3]` | `instruction[12:10]` |             |
+| `rs'`         | `instruction[9:7]`   |             |
+| `offset[2|6]` | `instruction[6:5]`   |             |
+| `frd'`        | `instruction[4:2]`   |             |
+| `op`          | `instruction[1:0]`   | 值是00      |
+
+指令要被扩展成：`flw frd, offset(rs)`
+
+扩展后的指令编码如下：
+
+| Attribute | Value                | Description                                                  |
+| --------- | -------------------- | ------------------------------------------------------------ |
+| `offset`  | `instruction[31:20]` | 其中，`instruction[31:27]`为0，`instruction[26:22]`为`offset[6:2]`，`instruction[21:20]`为0. |
+| `rs1`     | `instruction[19:15]` | `rs'+8`                                                      |
+| `width`   | `instruction[14:12]` | 值是010                                                      |
+| `rd`      | `instruction[11:7]`  | `rd'`+8                                                      |
+| `opcode`  | `instruction[6:0]`   | 值是0000111                                                  |
+
+### `c.fsw`：11100
+
+指令的格式是：`c.fsw frs2', offset(rs1')`
+
+指令编码如下：
+
+| Attribute     | Value                | Description |
+| ------------- | -------------------- | ----------- |
+| `funct3`      | `instruction[15:13]` | 值是111     |
+| `offset[5:3]` | `instruction[12:10]` |             |
+| `rs1'`        | `instruction[9:7]`   |             |
+| `offset[2|6]` | `instruction[6:5]`   |             |
+| `frs2'`       | `instruction[4:2]`   |             |
+| `op`          | `instruction[1:0]`   | 00          |
+
+扩展后的指令是：`fsw frs2, offset(rs1)`
+
+指令编码如下：
+
+| Attribute      | Value                | Description                                                  |
+| -------------- | -------------------- | ------------------------------------------------------------ |
+| `offset[11:5]` | `instruction[31:25]` | 其中，`instruction[31:27]`为0，`instruction[26:25]`为`offset[6:5]` |
+| `frs2`         | `instruction[24:20]` | `frs2'+8`                                                    |
+| `rs1`          | `instruction[19:15]` | `rs1'+8`                                                     |
+| `width`        | `instruction[14:12]` | 值是010                                                      |
+| `offset[4:0]`  | `instruction[11:7]`  | 其中，`instruction[11:9]`为`offset[4:2]`，`instruction[8:7]`为0 |
+| `opcode`       | `instruction[6:0]`   | 值是0100111                                                  |
+
+
+
+### `c.flwsp`：01110
+
+指令的格式是：`c.flwsp rd, offset(sp)`
+
+指令的编码如下：
+
+| Attribute      | Value                | Description |
+| -------------- | -------------------- | ----------- |
+| `funct3`       | `instruction[15:13]` | 值是011     |
+| `imm[5]`       | `instruction[12]`    |             |
+| `rd`           | `instruction[11:7]`  |             |
+| `imm[4:2|7:6]` | `instruction[6:2]`   |             |
+| `op`           | `instruction[1:0]`   | 值是10      |
+
+要变成的指令是：`flw rd offset[7:2](sp)`，这个扩展后的指令的指令编码是：
+
+| Attribute | Value                | Description                                                  |
+| --------- | -------------------- | ------------------------------------------------------------ |
+| `offset`  | `instruction[31:20]` | `instruction[31:28]`是0，`instruction[27:22]`是`offset[7:2]`，`instruction[21:20]`是0 |
+| `rs`      | `instruction[19:15]` | 是`sp`指针，编号是2                                          |
+| `width`   | `instruction[14:12]` | 值是010                                                      |
+| `rd`      | `instruction[11:7]`  | 注意：这个是`frd`                                            |
+| `opcode`  | `instruction[6:0]`   | 值是0000111                                                  |
+
+
+
+### `c.fswsp`：11110
+
+指令的格式是：`c.fswsp frs, offset(sp)`
+
+指令编码如下：
+
+| Attribute         | Value                | Description |
+| ----------------- | -------------------- | ----------- |
+| `funct3`          | `instruction[15:13]` | 值是111     |
+| `offset[5:2|7:6]` | `instruction[12:7]`  |             |
+| `frs`             | `instruction[6:2]`   |             |
+| `op`              | `instruction[1:0]`   | 值是10      |
+
+扩展后的指令是：`fsw frs, offset[7:2](sp)`
+
+扩展后的指令编码是：
+
+| Attribute      | Value                | Description                                                  |
+| -------------- | -------------------- | ------------------------------------------------------------ |
+| `offset[11:5]` | `instruction[31:25]` | 其中`instruction[31:28]`为0，`instruction[27:25]`为`offset[7:5]` |
+| `frs`          | `instruction[24:20]` | 就是原来指令中的`instruction[6:2]`                           |
+| `rs1`          | `instruction[19:15]` | 就是`sp`，编号是2                                            |
+| `width`        | `instruction[14:12]` | 就是010                                                      |
+| `offset[4:0]`  | `instruction[11:7]`  | 其中，`instruction[11:9]`为`offset[4:2]`，`instruction[8:7]`为0 |
+| `opcode`       | `instruction[6:0]`   | 值是0100111                                                  |
 
