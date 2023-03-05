@@ -181,7 +181,7 @@ always @ (*) begin
 
 
     5'b01100: begin // c.flw
-    	rvc_dec_w = {5'b0, rvc_inst[5], rvc_inst[12:10], rvc_inst[6], 2'b00, 1'b1, rvc_inst[19:15], 3'b010, 1'b1, rvc_inst[11:7], 7'b0000111};
+    	rvc_dec_w = {5'b0, rvc_inst[5], rvc_inst[12:10], rvc_inst[6], 2'b00, 1'b1, rvc_inst[9:7], 3'b010, 1'b1, rvc_inst[11:7], 7'b0000111};
     end
 
 

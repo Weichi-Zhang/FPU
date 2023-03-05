@@ -2,7 +2,7 @@
 VC = verilator
 
 # TOP Module
-TOP_NAME = rv_fdecoder
+TOP_NAME = rvc_decoder
 
 # Test op
 TEST_OP = test1
