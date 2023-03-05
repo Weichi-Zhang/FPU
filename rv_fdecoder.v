@@ -16,7 +16,10 @@ module rv_fdecoder(
 	output reg [VIR_REG_ADDR_WIDTH - 1 : 0] f_rs3_address_o,
 	output reg [VIR_REG_ADDR_WIDTH - 1 : 0] f_rd_address_o,
 	output reg [11 : 0] f_immediate_o,
-	output reg [4 : 0] f_fu_function_o
+	output reg [4 : 0] f_fu_function_o,
+	output reg [1 : 0] f_fu_select_a_o,
+	output reg [1 : 0] f_fu_select_b_o,
+	output reg [1 : 0] f_fu_select_c_o,
 );
 
 wire [4 :0] funct5;
@@ -27,7 +30,7 @@ wire [VIR_REG_ADDR - 1 : 0] rs1;
 wire [2 : 0] rm;
 wire [VIR_REG_ADDR - 1 : 0] rd;
 wire [6 : 0] opcode;
-wire [11 : 0] offset;
+wire [31 : 0] offset;
 wire [2 : 0] width;
 wire [6 : 0] offset_first_part;
 wire [4 : 0] offset_second_part;
@@ -121,6 +124,9 @@ always @ (*) begin
 		f_rd_address_o = rd + 32;
 		f_immediate_o = 0;
 		f_fu_function_o = 0;
+		f_fu_select_a_o = ALU_SEL_REG;
+		f_fu_select_b_o = ALU_SEL_REG;
+		f_fu_select_c_o = ALU_SEL_IMM;
 	end
 	else if (is_fsubs) begin
 		f_uses_rs1_o = 1'b1;
@@ -133,6 +139,9 @@ always @ (*) begin
 		f_rd_address_o = rd + 32;
 		f_immediate_o = 0;
 		f_fu_function_o = 1;
+		f_fu_select_a_o = ALU_SEL_REG;
+		f_fu_select_b_o = ALU_SEL_REG;
+		f_fu_select_c_o = ALU_SEL_IMM;
 	end
 	else if (is_fmuls) begin
 		f_uses_rs1_o = 1'b1;
@@ -145,6 +154,9 @@ always @ (*) begin
 		f_rd_address_o = rd + 32;
 		f_immediate_o = 0;
 		f_fu_function_o = 2;
+		f_fu_select_a_o = ALU_SEL_REG;
+		f_fu_select_b_o = ALU_SEL_REG;
+		f_fu_select_c_o = ALU_SEL_IMM;
 	end
 	else if (is_fmins) begin
 		f_uses_rs1_o = 1'b1;
@@ -157,6 +169,9 @@ always @ (*) begin
 		f_rd_address_o = rd + 32;
 		f_immediate_o = 0;
 		f_fu_function_o = 3;
+		f_fu_select_a_o = ALU_SEL_REG;
+		f_fu_select_b_o = ALU_SEL_REG;
+		f_fu_select_c_o = ALU_SEL_IMM;
 	end
 	else if (is_fmaxs) begin
 		f_uses_rs1_o = 1'b1;
@@ -169,6 +184,9 @@ always @ (*) begin
 		f_rd_address_o = rd + 32;
 		f_immediate_o = 0;
 		f_fu_function_o = 4;
+		f_fu_select_a_o = ALU_SEL_REG;
+		f_fu_select_b_o = ALU_SEL_REG;
+		f_fu_select_c_o = ALU_SEL_IMM;
 	end
 	else if (is_fmadds) begin
 		f_uses_rs1_o = 1'b1;
@@ -181,6 +199,9 @@ always @ (*) begin
 		f_rd_address_o = rd + 32;
 		f_immediate_o = 0;
 		f_fu_function_o = 5;
+		f_fu_select_a_o = ALU_SEL_REG;
+		f_fu_select_b_o = ALU_SEL_REG;
+		f_fu_select_c_o = ALU_SEL_REG;
 	end
 	else if (is_fnmadds) begin
 		f_uses_rs1_o = 1'b1;
@@ -193,6 +214,9 @@ always @ (*) begin
 		f_rd_address_o = rd + 32;
 		f_immediate_o = 0;
 		f_fu_function_o = 6;
+		f_fu_select_a_o = ALU_SEL_REG;
+		f_fu_select_b_o = ALU_SEL_REG;
+		f_fu_select_c_o = ALU_SEL_REG;
 	end
 	else if (is_fmsubs) begin
 		f_uses_rs1_o = 1'b1;
@@ -205,6 +229,9 @@ always @ (*) begin
 		f_rd_address_o = rd + 32;
 		f_immediate_o = 0;
 		f_fu_function_o = 7;
+		f_fu_select_a_o = ALU_SEL_REG;
+		f_fu_select_b_o = ALU_SEL_REG;
+		f_fu_select_c_o = ALU_SEL_REG;
 	end
 	else if (is_fnmsubs) begin
 		f_uses_rs1_o = 1'b1;
@@ -217,6 +244,9 @@ always @ (*) begin
 		f_rd_address_o = rd + 32;
 		f_immediate_o = 0;
 		f_fu_function_o = 8;
+		f_fu_select_a_o = ALU_SEL_REG;
+		f_fu_select_b_o = ALU_SEL_REG;
+		f_fu_select_c_o = ALU_SEL_REG;
 	end
 	else if (is_fcvtws) begin
 		f_uses_rs1_o = 1'b1;
@@ -229,6 +259,9 @@ always @ (*) begin
 		f_rd_address_o = rd;
 		f_immediate_o = 0;
 		f_fu_function_o = 9;
+		f_fu_select_a_o = ALU_SEL_REG;
+		f_fu_select_b_o = ALU_SEL_IMM;
+		f_fu_select_c_o = ALU_SEL_IMM;
 	end
 	else if (is_fcvtwus) begin
 		f_uses_rs1_o = 1'b1;
@@ -241,6 +274,9 @@ always @ (*) begin
 		f_rd_address_o = rd;
 		f_immediate_o = 0;
 		f_fu_function_o = 10;
+		f_fu_select_a_o = ALU_SEL_REG;
+		f_fu_select_b_o = ALU_SEL_IMM;
+		f_fu_select_c_o = ALU_SEL_IMM;
 	end
 	else if (is_fcvtls) begin
 		f_uses_rs1_o = 1'b1;
@@ -253,6 +289,9 @@ always @ (*) begin
 		f_rd_address_o = rd;
 		f_immediate_o = 0;
 		f_fu_function_o = 11;
+		f_fu_select_a_o = ALU_SEL_REG;
+		f_fu_select_b_o = ALU_SEL_IMM;
+		f_fu_select_c_o = ALU_SEL_IMM;
 	end
 	else if (is_fcvtlus) begin
 		f_uses_rs1_o = 1'b1;
@@ -265,6 +304,9 @@ always @ (*) begin
 		f_rd_address_o = rd;
 		f_immediate_o = 0;
 		f_fu_function_o = 12;
+		f_fu_select_a_o = ALU_SEL_REG;
+		f_fu_select_b_o = ALU_SEL_IMM;
+		f_fu_select_c_o = ALU_SEL_IMM;
 	end
 	else if (is_fcvtsw) begin
 		f_uses_rs1_o = 1'b1;
@@ -277,6 +319,9 @@ always @ (*) begin
 		f_rd_address_o = rd + 32;
 		f_immediate_o = 0;
 		f_fu_function_o = 13;
+		f_fu_select_a_o = ALU_SEL_REG;
+		f_fu_select_b_o = ALU_SEL_IMM;
+		f_fu_select_c_o = ALU_SEL_IMM;
 	end
 	else if (is_fcvtswu) begin
 		f_uses_rs1_o = 1'b1;
@@ -289,6 +334,9 @@ always @ (*) begin
 		f_rd_address_o = rd + 32;
 		f_immediate_o = 0;
 		f_fu_function_o = 14;
+		f_fu_select_a_o = ALU_SEL_REG;
+		f_fu_select_b_o = ALU_SEL_IMM;
+		f_fu_select_c_o = ALU_SEL_IMM;
 	end
 	else if (is_fcvtsl) begin
 		f_uses_rs1_o = 1'b1;
@@ -301,6 +349,9 @@ always @ (*) begin
 		f_rd_address_o = rd;
 		f_immediate_o = 0;
 		f_fu_function_o = 15;
+		f_fu_select_a_o = ALU_SEL_REG;
+		f_fu_select_b_o = ALU_SEL_IMM;
+		f_fu_select_c_o = ALU_SEL_IMM;
 	end
 	else if (is_fcvtslu) begin
 		f_uses_rs1_o = 1'b1;
@@ -313,6 +364,9 @@ always @ (*) begin
 		f_rd_address_o = rd;
 		f_immediate_o = 0;
 		f_fu_function_o = 16;
+		f_fu_select_a_o = ALU_SEL_REG;
+		f_fu_select_b_o = ALU_SEL_IMM;
+		f_fu_select_c_o = ALU_SEL_IMM;
 	end
 	else if (is_fsgnjs) begin
 		f_uses_rs1_o = 1'b1;
@@ -325,6 +379,9 @@ always @ (*) begin
 		f_rd_address_o = rd + 32;
 		f_immediate_o = 0;
 		f_fu_function_o = 17;
+		f_fu_select_a_o = ALU_SEL_REG;
+		f_fu_select_b_o = ALU_SEL_REG;
+		f_fu_select_c_o = ALU_SEL_IMM;
 	end
 	else if (is_fsgnjns) begin
 		f_uses_rs1_o = 1'b1;
@@ -337,6 +394,9 @@ always @ (*) begin
 		f_rd_address_o = rd + 32;
 		f_immediate_o = 0;
 		f_fu_function_o = 18;
+		f_fu_select_a_o = ALU_SEL_REG;
+		f_fu_select_b_o = ALU_SEL_REG;
+		f_fu_select_c_o = ALU_SEL_IMM;
 	end
 	else if (is_fsgnjxs) begin
 		f_uses_rs1_o = 1'b1;
@@ -349,6 +409,9 @@ always @ (*) begin
 		f_rd_address_o = rd + 32;
 		f_immediate_o = 0;
 		f_fu_function_o = 19;
+		f_fu_select_a_o = ALU_SEL_REG;
+		f_fu_select_b_o = ALU_SEL_REG;
+		f_fu_select_c_o = ALU_SEL_IMM;
 	end
 	else if (is_feqs) begin
 		f_uses_rs1_o = 1'b1;
@@ -361,6 +424,9 @@ always @ (*) begin
 		f_rd_address_o = rd;
 		f_immediate_o = 0;
 		f_fu_function_o = 20;
+		f_fu_select_a_o = ALU_SEL_REG;
+		f_fu_select_b_o = ALU_SEL_REG;
+		f_fu_select_c_o = ALU_SEL_IMM;
 	end
 	else if (is_flts) begin
 		f_uses_rs1_o = 1'b1;
@@ -373,6 +439,9 @@ always @ (*) begin
 		f_rd_address_o = rd;
 		f_immediate_o = 0;
 		f_fu_function_o = 21;
+		f_fu_select_a_o = ALU_SEL_REG;
+		f_fu_select_b_o = ALU_SEL_REG;
+		f_fu_select_c_o = ALU_SEL_IMM;
 	end
 	else if (is_fles) begin
 		f_uses_rs1_o = 1'b1;
@@ -385,6 +454,9 @@ always @ (*) begin
 		f_rd_address_o = rd;
 		f_immediate_o = 0;
 		f_fu_function_o = 22;
+		f_fu_select_a_o = ALU_SEL_REG;
+		f_fu_select_b_o = ALU_SEL_REG;
+		f_fu_select_c_o = ALU_SEL_IMM;
 	end
 	else if (is_fclass) begin
 		f_uses_rs1_o = 1'b1;
@@ -397,6 +469,9 @@ always @ (*) begin
 		f_rd_address_o = rd;
 		f_immediate_o = 0;
 		f_fu_function_o = 23;
+		f_fu_select_a_o = ALU_SEL_REG;
+		f_fu_select_b_o = ALU_SEL_IMM;
+		f_fu_select_c_o = ALU_SEL_IMM;
 	end
 	else if (is_fmvwx) begin
 		f_uses_rs1_o = 1'b1;
@@ -409,6 +484,9 @@ always @ (*) begin
 		f_rd_address_o = rd + 32;
 		f_immediate_o = 0;
 		f_fu_function_o = 24;
+		f_fu_select_a_o = ALU_SEL_REG;
+		f_fu_select_b_o = ALU_SEL_IMM;
+		f_fu_select_c_o = ALU_SEL_IMM;
 	end
 	else if (is_fmvxw) begin
 		f_uses_rs1_o = 1'b1;
@@ -421,6 +499,9 @@ always @ (*) begin
 		f_rd_address_o = rd + 32;
 		f_immediate_o = 0;
 		f_fu_function_o = 25;
+		f_fu_select_a_o = ALU_SEL_REG;
+		f_fu_select_b_o = ALU_SEL_IMM;
+		f_fu_select_c_o = ALU_SEL_IMM;
 	end
 	else if (is_fdivs) begin
 		f_uses_rs1_o = 1'b1;
@@ -433,6 +514,9 @@ always @ (*) begin
 		f_rd_address_o = rd + 32;
 		f_immediate_o = 0;
 		f_fu_function_o = 26;
+		f_fu_select_a_o = ALU_SEL_REG;
+		f_fu_select_b_o = ALU_SEL_REG;
+		f_fu_select_c_o = ALU_SEL_IMM;
 	end
 	else if (is_fsqrts) begin
 		f_uses_rs1_o = 1'b1;
@@ -445,6 +529,9 @@ always @ (*) begin
 		f_rd_address_o = rd + 32;
 		f_immediate_o = 0;
 		f_fu_function_o = 27;
+		f_fu_select_a_o = ALU_SEL_REG;
+		f_fu_select_b_o = ALU_SEL_IMM;
+		f_fu_select_c_o = ALU_SEL_IMM;
 	end
 	else if (is_flw) begin
 		f_uses_rs1_o = 1'b1;
@@ -455,8 +542,11 @@ always @ (*) begin
 		f_rs2_address_o = 0;
 		f_rs3_address_o = 0;
 		f_rd_address_o = rd + 32;
-		f_immediate_o = offset;
+		f_immediate_o = {{ 20{ offset[11] } } , offset};
 		f_fu_function_o = 28;
+		f_fu_select_a_o = ALU_SEL_REG;
+		f_fu_select_b_o = ALU_SEL_IMM;
+		f_fu_select_c_o = ALU_SEL_IMM;
 	end
 	else if (is_fsw) begin
 		f_uses_rs1_o = 1'b1;
@@ -467,8 +557,11 @@ always @ (*) begin
 		f_rs2_address_o = rs2 + 32;
 		f_rs3_address_o = 0;
 		f_rd_address_o = 0;
-		f_immediate_o = {offset_second_part, offset_first_part};
+		f_immediate_o = {{ 20{ offset_first_part[6] } }, offset_first_part, offset_second_part};
 		f_fu_function_o = 29;
+		f_fu_select_a_o = ALU_SEL_REG;
+		f_fu_select_b_o = ALU_SEL_IMM;
+		f_fu_select_c_o = ALU_SEL_IMM;
 	end
 	else begin
 		f_uses_rs1_o = 1'b0;
@@ -481,6 +574,9 @@ always @ (*) begin
 		f_rd_address_o = 0;
 		f_immediate_o = 0;
 		f_fu_function_o = 0;
+		f_fu_select_a_o = ALU_SEL_IMM;
+		f_fu_select_b_o = ALU_SEL_IMM;
+		f_fu_select_c_o = ALU_SEL_IMM;
 	end
 end
 
